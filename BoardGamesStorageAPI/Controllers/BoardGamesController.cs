@@ -79,9 +79,7 @@ namespace BoardGamesStorageAPI.Controllers
         }
 
         [HttpDelete("DeleteBoardGame/{boardGameId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         public IActionResult DeleteBoardGame(int boardGameId)
         {
             BoardGame? gameDb = _entityFramework.BoardGames.Where(b => b.BoardGameId ==boardGameId).FirstOrDefault<BoardGame>();
