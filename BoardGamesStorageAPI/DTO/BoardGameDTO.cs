@@ -1,6 +1,6 @@
 ﻿namespace BoardGamesStorageAPI.DTO
 {
-    public class BoardGameToAddDTO
+    public class BoardGameDTO
     {
         public string BoardGameName { get; set; }
         public int MinimumPlayers { get; set; }
@@ -11,22 +11,14 @@
         public string Publisher { get; set; }
         public string Author { get; set; }
 
-        public BoardGameToAddDTO()
+        public BoardGameDTO()
         {
-            if (BoardGameName == null)
-            {
-                BoardGameName = string.Empty;
-            }
+          BoardGameName = string.Empty;
 
-            if (Publisher == null)
-            {
-                Publisher = string.Empty;
-            }
+          Publisher = string.Empty;
 
-            if (Author == null)
-            {
-                Author = string.Empty;
-            }
+          Author = string.Empty;
+            
         }
     }
 }

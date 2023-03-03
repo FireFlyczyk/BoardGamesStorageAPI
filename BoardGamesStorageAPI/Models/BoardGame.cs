@@ -15,20 +15,11 @@
 
         public BoardGame()
         {
-            if (BoardGameName == null)
-            {
-                BoardGameName = string.Empty;
-            }
+            BoardGameName = string.Empty;
 
-            if (Publisher == null)
-            {
-                Publisher = string.Empty;
-            }
+            Publisher = string.Empty;
 
-            if (Author == null)
-            {
-                Author = string.Empty;
-            }
+            Author = string.Empty;
 
         }
     }

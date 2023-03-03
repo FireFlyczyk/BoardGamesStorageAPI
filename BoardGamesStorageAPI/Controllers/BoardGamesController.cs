@@ -10,40 +10,37 @@ namespace BoardGamesStorageAPI.Controllers
     [Route("[controller]")]
     public class BoardGamesController : ControllerBase
     {
-        DataContextEF _entityFramework;
+        IBoardGameRepository _boardGameRepository;
         IMapper _mapper;
 
-        public BoardGamesController(IConfiguration configuration)
+        public BoardGamesController(IConfiguration configuration, IBoardGameRepository boardGameRepository)
         {
-            _entityFramework = new DataContextEF(configuration);
-            _mapper = new Mapper(new MapperConfiguration(config => {
+            _boardGameRepository = boardGameRepository;
+            _mapper = new Mapper(new MapperConfiguration(config =>
+            {
 
-                config.CreateMap<BoardGameToAddDTO, BoardGame>();
+                config.CreateMap<BoardGameDTO, BoardGame>();
             }));
+            _boardGameRepository = boardGameRepository;
         }
 
         [HttpGet("GetBoardGames")]
         public IEnumerable<BoardGame> GetBoardGames()
         {
-            IEnumerable<BoardGame> boardGames = _entityFramework.BoardGames.ToList<BoardGame>();
+            IEnumerable<BoardGame> boardGames = _boardGameRepository.GetBoardGames();
             return boardGames;
         }
 
         [HttpGet("GetSingleBoardGame/{boardGameId}")]
         public BoardGame GetSingleBoardGame(int boardGameId)
         {
-            BoardGame game = _entityFramework.BoardGames.Where(b => b.BoardGameId == boardGameId).FirstOrDefault<BoardGame>();
-            if (game != null)
-            {
-                return game;
-            }
-            throw new Exception("Failed to Get Board Game");
+          return _boardGameRepository.GetSingleBoardGame(boardGameId);
         }
 
         [HttpPut("EditBoardGame")]
         public IActionResult EditBoardGame(BoardGame boardGame)
         {
-            BoardGame? gameDb = _entityFramework.BoardGames.Where(b => b.BoardGameId == boardGame.BoardGameId).FirstOrDefault<BoardGame>();
+            BoardGame? gameDb = _boardGameRepository.GetSingleBoardGame(boardGame.BoardGameId);
 
             if (gameDb != null)
             {
@@ -56,7 +53,7 @@ namespace BoardGamesStorageAPI.Controllers
                 gameDb.Publisher = boardGame.Publisher;
                 gameDb.Author = boardGame.Author;
 
-                if (_entityFramework.SaveChanges()>0)
+                if (_boardGameRepository.SaveChanges())
                 {
                     return Ok();
                 }
@@ -66,12 +63,12 @@ namespace BoardGamesStorageAPI.Controllers
         }
 
         [HttpPost("AddBoardGame")]
-        public IActionResult AddBoardGame(BoardGameToAddDTO boardGame)
+        public IActionResult AddBoardGame(BoardGameDTO boardGame)
         {
             BoardGame gameDb = _mapper.Map<BoardGame>(boardGame);
 
-            _entityFramework.Add(gameDb);
-            if (_entityFramework.SaveChanges() > 0)
+            _boardGameRepository.AddEntity<BoardGame>(gameDb);
+            if (_boardGameRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -82,13 +79,13 @@ namespace BoardGamesStorageAPI.Controllers
 
         public IActionResult DeleteBoardGame(int boardGameId)
         {
-            BoardGame? gameDb = _entityFramework.BoardGames.Where(b => b.BoardGameId ==boardGameId).FirstOrDefault<BoardGame>();
+            BoardGame? gameDb = _boardGameRepository.GetSingleBoardGame(boardGameId);
 
             if (gameDb != null)
             {
-                _entityFramework.BoardGames.Remove(gameDb);
+                _boardGameRepository.RemoveEntity<BoardGame>(gameDb);
 
-                if (_entityFramework.SaveChanges() > 0)
+                if (_boardGameRepository.SaveChanges())
                 {
                     return Ok();
                 }
