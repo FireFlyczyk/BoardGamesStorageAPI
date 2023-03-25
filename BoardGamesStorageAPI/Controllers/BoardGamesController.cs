@@ -18,8 +18,7 @@ namespace BoardGamesStorageAPI.Controllers
             _boardGameRepository = boardGameRepository;
             _mapper = new Mapper(new MapperConfiguration(config =>
             {
-
-                config.CreateMap<BoardGameDTO, BoardGame>();
+                config.CreateMap<BoardGame, BoardGameDTO>();
             }));
             _boardGameRepository = boardGameRepository;
         }
