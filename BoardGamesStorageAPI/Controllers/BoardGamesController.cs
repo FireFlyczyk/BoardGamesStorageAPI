@@ -38,28 +38,24 @@ namespace BoardGamesStorageAPI.Controllers
         }
 
         [HttpPut("EditBoardGame")]
-        public IActionResult EditBoardGame(BoardGame boardGame)
+       
+        public IActionResult EditBoardGame(int boardGameId, BoardGameDTO boardGameDto)
         {
-            BoardGame? gameDb = _boardGameRepository.GetSingleBoardGame(boardGame.BoardGameId);
+            var gameDb = _boardGameRepository.GetSingleBoardGame(boardGameId);
 
-            if (gameDb != null)
+            if (gameDb == null)
             {
-                gameDb.BoardGameName = boardGame.BoardGameName;
-                gameDb.MinimumPlayers = boardGame.MinimumPlayers;
-                gameDb.MaximumPlayers = boardGame.MaximumPlayers;
-                gameDb.PlayTimeInMinutes = boardGame.PlayTimeInMinutes;
-                gameDb.AgeLimit = boardGame.AgeLimit;
-                gameDb.YearOfProduction = boardGame.YearOfProduction;
-                gameDb.Publisher = boardGame.Publisher;
-                gameDb.Author = boardGame.Author;
-
-                if (_boardGameRepository.SaveChanges())
-                {
-                    return Ok();
-                }
-                throw new Exception("Failed to Update Board Game");
+                return NotFound();
             }
-            throw new Exception("Failed to Update Board Game");
+
+            _mapper.Map(boardGameDto, gameDb);
+
+            if (_boardGameRepository.SaveChanges())
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to update Board Game");
         }
 
         [HttpPost("AddBoardGame")]
