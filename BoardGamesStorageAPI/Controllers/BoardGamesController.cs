@@ -37,7 +37,7 @@ namespace BoardGamesStorageAPI.Controllers
           return _boardGameRepository.GetSingleBoardGame(boardGameId);
         }
 
-        [HttpPut("EditBoardGame")]
+       [HttpPut("EditBoardGame/{boardGameId}")]
        
         public IActionResult EditBoardGame(int boardGameId, BoardGameDTO boardGameDto)
         {
