@@ -1,4 +1,5 @@
 using BoardGamesStorageAPI.Data;
+using BoardGamesStorageAPI.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IBoardGameRepository,BoardGameRepository>();
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 var app = builder.Build();
 

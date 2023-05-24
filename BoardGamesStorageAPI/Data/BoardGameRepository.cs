@@ -6,7 +6,7 @@ namespace BoardGamesStorageAPI.Data
     public class BoardGameRepository : IBoardGameRepository
 
     {
-        DataContextEF _entityFramework;
+        readonly DataContextEF _entityFramework;
 
         public BoardGameRepository(IConfiguration configuration)
         {

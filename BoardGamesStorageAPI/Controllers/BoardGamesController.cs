@@ -10,18 +10,15 @@ namespace BoardGamesStorageAPI.Controllers
     [Route("[controller]")]
     public class BoardGamesController : ControllerBase
     {
-        IBoardGameRepository _boardGameRepository;
-        IMapper _mapper;
+        private readonly IBoardGameRepository _boardGameRepository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<BoardGamesController> _logger;
 
-        public BoardGamesController(IConfiguration configuration, IBoardGameRepository boardGameRepository)
+        public BoardGamesController(IConfiguration configuration, IBoardGameRepository boardGameRepository, IMapper mapper, ILogger<BoardGamesController> logger)
         {
-            _boardGameRepository = boardGameRepository;
-            _mapper = new Mapper(new MapperConfiguration(config =>
-            {
-
-                config.CreateMap<BoardGameDTO, BoardGame>();
-            }));
-            _boardGameRepository = boardGameRepository;
+            _boardGameRepository = boardGameRepository ?? throw new ArgumentNullException(nameof(boardGameRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("GetBoardGames")]
