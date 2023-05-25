@@ -14,75 +14,125 @@ namespace BoardGamesStorageAPI.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<BoardGamesController> _logger;
 
-        public BoardGamesController(IConfiguration configuration, IBoardGameRepository boardGameRepository, IMapper mapper, ILogger<BoardGamesController> logger)
+        public BoardGamesController(IBoardGameRepository boardGameRepository, IMapper mapper, ILogger<BoardGamesController> logger)
         {
             _boardGameRepository = boardGameRepository ?? throw new ArgumentNullException(nameof(boardGameRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [HttpGet("GetBoardGames")]
-        public async Task<IEnumerable<BoardGame>> GetBoardGames()
+        [HttpGet]
+        public async Task<IActionResult> GetBoardGames()
         {
-            IEnumerable<BoardGame> boardGames = await _boardGameRepository.GetBoardGamesAsync();
-            return boardGames;
+            try
+            {
+                IEnumerable<BoardGame> boardGames = await _boardGameRepository.GetBoardGamesAsync();
+                return Ok(boardGames);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving board games.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        [HttpGet("GetSingleBoardGame/{boardGameId}")]
-        public async Task<BoardGame> GetSingleBoardGame(int boardGameId)
+        [HttpGet("{boardGameId}")]
+        public async Task<IActionResult> GetSingleBoardGame(int boardGameId)
         {
-            return await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
+            try
+            {
+                BoardGame game = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
+
+                if (game == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(game);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving a board game.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        [HttpPut("EditBoardGame/{boardGameId}")]
+        [HttpPut("{boardGameId}")]
         public async Task<IActionResult> EditBoardGame(int boardGameId, BoardGameDTO boardGameDto)
         {
-            var gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
-
-            if (gameDb == null)
+            try
             {
-                return NotFound();
-            }
+                BoardGame gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
 
-            _mapper.Map(boardGameDto, gameDb);
+                if (gameDb == null)
+                {
+                    return NotFound();
+                }
 
-            if (await _boardGameRepository.SaveChangesAsync())
-            {
-                return Ok();
-            }
-
-            throw new Exception("Failed to update Board Game");
-        }
-
-        [HttpPost("AddBoardGame")]
-        public async Task<IActionResult> AddBoardGame(BoardGameDTO boardGame)
-        {
-            BoardGame gameDb = _mapper.Map<BoardGame>(boardGame);
-
-            _boardGameRepository.AddEntity<BoardGame>(gameDb);
-            if (await _boardGameRepository.SaveChangesAsync())
-            {
-                return Ok();
-            }
-            throw new Exception("Failed to Add Board Game");
-        }
-
-        [HttpDelete("DeleteBoardGame/{boardGameId}")]
-        public async Task<IActionResult> DeleteBoardGame(int boardGameId)
-        {
-            BoardGame? gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
-
-            if (gameDb != null)
-            {
-                _boardGameRepository.RemoveEntity<BoardGame>(gameDb);
+                _mapper.Map(boardGameDto, gameDb);
 
                 if (await _boardGameRepository.SaveChangesAsync())
                 {
                     return Ok();
                 }
-                throw new Exception("Failed to Delete Board Game");
+
+                return StatusCode(500, "Failed to update Board Game");
             }
-            throw new Exception("Failed to Delete Board Game");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while editing a board game.");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddBoardGame(BoardGameDTO boardGame)
+        {
+            try
+            {
+                BoardGame gameDb = _mapper.Map<BoardGame>(boardGame);
+
+                _boardGameRepository.AddEntity(gameDb);
+                if (await _boardGameRepository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+
+                return StatusCode(422, "Failed to add Board Game");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding a board game.");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{boardGameId}")]
+        public async Task<IActionResult> DeleteBoardGame(int boardGameId)
+        {
+            try
+            {
+                BoardGame gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
+
+                if (gameDb == null)
+                {
+                    return NotFound();
+                }
+
+                _boardGameRepository.RemoveEntity(gameDb);
+
+                if (await _boardGameRepository.SaveChangesAsync())
+                {
+                    return NoContent();
+                }
+
+                return StatusCode(500, "Failed to delete Board Game");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting a board game.");
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }
