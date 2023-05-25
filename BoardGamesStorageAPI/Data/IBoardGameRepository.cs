@@ -4,11 +4,11 @@ namespace BoardGamesStorageAPI.Data
 {
     public interface IBoardGameRepository
     {
-        public bool SaveChanges();
-        public void AddEntity<T>(T entityToAdd);
-        public void RemoveEntity<T>(T entityToRemove);
-        public IEnumerable<BoardGame> GetBoardGames();
-        public BoardGame GetSingleBoardGame(int boardGameId);
+        Task<bool> SaveChangesAsync();
+        void AddEntity<T>(T entityToAdd);
+        void RemoveEntity<T>(T entityToRemove);
+        Task<IEnumerable<BoardGame>> GetBoardGamesAsync();
+        Task<BoardGame> GetSingleBoardGameAsync(int boardGameId);
 
     }
 }

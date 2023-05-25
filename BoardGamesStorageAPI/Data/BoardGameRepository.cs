@@ -1,4 +1,5 @@
 ﻿using BoardGamesStorageAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace BoardGamesStorageAPI.Data
@@ -10,19 +11,20 @@ namespace BoardGamesStorageAPI.Data
 
         public BoardGameRepository(IConfiguration configuration)
         {
-            _entityFramework= new DataContextEF(configuration);
+            _entityFramework = new DataContextEF(configuration);
         }
 
-        public bool SaveChanges()
+        public async Task<bool> SaveChangesAsync()
         {
-            return _entityFramework.SaveChanges()>0;
+            return await _entityFramework.SaveChangesAsync() > 0;
         }
+
         public void AddEntity<T>(T entityToAdd)
         {
-          if (entityToAdd!=null) 
-          {
+            if (entityToAdd != null)
+            {
                 _entityFramework.Add(entityToAdd);
-          }
+            }
         }
 
         public void RemoveEntity<T>(T entityToRemove)
@@ -32,15 +34,16 @@ namespace BoardGamesStorageAPI.Data
                 _entityFramework.Remove(entityToRemove);
             }
         }
-        public IEnumerable<BoardGame> GetBoardGames()
+
+        public async Task<IEnumerable<BoardGame>> GetBoardGamesAsync()
         {
-            IEnumerable<BoardGame> boardGames = _entityFramework.BoardGames.ToList<BoardGame>();
+            IEnumerable<BoardGame> boardGames = await _entityFramework.BoardGames.ToListAsync();
             return boardGames;
         }
 
-        public BoardGame GetSingleBoardGame(int boardGameId)
+        public async Task<BoardGame> GetSingleBoardGameAsync(int boardGameId)
         {
-            BoardGame game = _entityFramework.BoardGames.Where(b => b.BoardGameId == boardGameId).FirstOrDefault<BoardGame>();
+            BoardGame game = await _entityFramework.BoardGames.FirstOrDefaultAsync(b => b.BoardGameId == boardGameId);
             if (game != null)
             {
                 return game;

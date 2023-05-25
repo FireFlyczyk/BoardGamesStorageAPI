@@ -22,23 +22,22 @@ namespace BoardGamesStorageAPI.Controllers
         }
 
         [HttpGet("GetBoardGames")]
-        public IEnumerable<BoardGame> GetBoardGames()
+        public async Task<IEnumerable<BoardGame>> GetBoardGames()
         {
-            IEnumerable<BoardGame> boardGames = _boardGameRepository.GetBoardGames();
+            IEnumerable<BoardGame> boardGames = await _boardGameRepository.GetBoardGamesAsync();
             return boardGames;
         }
 
         [HttpGet("GetSingleBoardGame/{boardGameId}")]
-        public BoardGame GetSingleBoardGame(int boardGameId)
+        public async Task<BoardGame> GetSingleBoardGame(int boardGameId)
         {
-          return _boardGameRepository.GetSingleBoardGame(boardGameId);
+            return await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
         }
 
-       [HttpPut("EditBoardGame/{boardGameId}")]
-       
-        public IActionResult EditBoardGame(int boardGameId, BoardGameDTO boardGameDto)
+        [HttpPut("EditBoardGame/{boardGameId}")]
+        public async Task<IActionResult> EditBoardGame(int boardGameId, BoardGameDTO boardGameDto)
         {
-            var gameDb = _boardGameRepository.GetSingleBoardGame(boardGameId);
+            var gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
 
             if (gameDb == null)
             {
@@ -47,7 +46,7 @@ namespace BoardGamesStorageAPI.Controllers
 
             _mapper.Map(boardGameDto, gameDb);
 
-            if (_boardGameRepository.SaveChanges())
+            if (await _boardGameRepository.SaveChangesAsync())
             {
                 return Ok();
             }
@@ -56,12 +55,12 @@ namespace BoardGamesStorageAPI.Controllers
         }
 
         [HttpPost("AddBoardGame")]
-        public IActionResult AddBoardGame(BoardGameDTO boardGame)
+        public async Task<IActionResult> AddBoardGame(BoardGameDTO boardGame)
         {
             BoardGame gameDb = _mapper.Map<BoardGame>(boardGame);
 
             _boardGameRepository.AddEntity<BoardGame>(gameDb);
-            if (_boardGameRepository.SaveChanges())
+            if (await _boardGameRepository.SaveChangesAsync())
             {
                 return Ok();
             }
@@ -69,21 +68,19 @@ namespace BoardGamesStorageAPI.Controllers
         }
 
         [HttpDelete("DeleteBoardGame/{boardGameId}")]
-
-        public IActionResult DeleteBoardGame(int boardGameId)
+        public async Task<IActionResult> DeleteBoardGame(int boardGameId)
         {
-            BoardGame? gameDb = _boardGameRepository.GetSingleBoardGame(boardGameId);
+            BoardGame? gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
 
             if (gameDb != null)
             {
                 _boardGameRepository.RemoveEntity<BoardGame>(gameDb);
 
-                if (_boardGameRepository.SaveChanges())
+                if (await _boardGameRepository.SaveChangesAsync())
                 {
                     return Ok();
                 }
                 throw new Exception("Failed to Delete Board Game");
-
             }
             throw new Exception("Failed to Delete Board Game");
         }
