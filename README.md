@@ -1,5 +1,5 @@
 ## **Board Games Storage API**
-This is a small pet 🐶 project called Board Games Storage API. It provides a simple API for managing board games stored in a database. The project is built using ASP.NET Core and follows the RESTful architectural style.
+This is a small pet 🐶 project called Board Games Storage API. It provides a simple API for managing board games stored in SQL database. The project is built using ASP.NET Core and follows the RESTful architectural style.
 
 ## API Architecture
 ![ARCH](https://github.com/FireFlyczyk/BoardGamesStorageAPI/blob/master/API%20ARCH.jpg)
@@ -9,7 +9,7 @@ The Board Games Storage API provides the following features:
 
 + **GetBoardGames**: Retrieves a list of all board games stored in the database.
 + **GetSingleBoardGame**: Retrieves a single board game by its unique identifier.
-+ **EditBoardGame**: Updates the information of a board game.
++ **EditBoardGame**: Updates the information of a single board game.
 + **AddBoardGame**: Adds a new board game to the database.
 + **DeleteBoardGame**: Removes a board game from the database.
 
@@ -17,7 +17,7 @@ The Board Games Storage API provides the following features:
 The project utilizes the following technologies and frameworks:
 
 + **ASP.NET Core**: The web framework used to build the API.
-+ **Entity Framework Core**: The ORM used for database access and management.
++ **Entity Framework Core**: The ORM used for database access (SQL in this case) and management.
 + **Swagger**: Provides API documentation and an interactive UI for testing.
 + **Dependency Injection**: The project uses dependency injection to manage the application's services and components. This helps decouple the code and makes it more modular and testable.
 + **Logging**: The project utilizes logging to record and handle errors or exceptions that occur during the execution of the API methods.
@@ -48,4 +48,5 @@ To run the Board Games Storage API, follow these steps:
 
 The API is self-documented using Swagger. Once the application is running, you can access the Swagger UI by navigating to https://localhost:{port}/swagger/index.html. This will provide detailed information about the available endpoints, request/response schemas, and the ability to test the API directly from the UI.
 
-Feel free to explore and interact with the Board Games Storage API! 😄
+Feel free to explore and interact with the API! 😄
+If you have any questions please feel free to contact me via email or LinkedIn :) 
