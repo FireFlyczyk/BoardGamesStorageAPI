@@ -1,6 +1,9 @@
 ## **Board Games Storage API**
 This is a small pet 🐶 project called Board Games Storage API. It provides a simple API for managing board games stored in a database. The project is built using ASP.NET Core and follows the RESTful architectural style.
 
+## API Architecture
+![ARCH](https://github.com/FireFlyczyk/BoardGamesStorageAPI/blob/master/API%20ARCH.jpg)
+
 ## Features
 The Board Games Storage API provides the following features:
 
