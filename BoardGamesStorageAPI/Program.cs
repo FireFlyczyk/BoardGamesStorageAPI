@@ -1,5 +1,6 @@
 using BoardGamesStorageAPI.Data;
 using BoardGamesStorageAPI.Profiles;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +10,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IBoardGameRepository,BoardGameRepository>();
+builder.Services.AddScoped(typeof(IBoardGameRepository<>), typeof(BoardGameRepository<>));
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+builder.Services.AddDbContext<DataContextEF>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
 
 var app = builder.Build();
 

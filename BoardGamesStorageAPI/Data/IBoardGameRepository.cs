@@ -1,14 +1,14 @@
-﻿using BoardGamesStorageAPI.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BoardGamesStorageAPI.Data
 {
-    public interface IBoardGameRepository
+    public interface IBoardGameRepository<TEntity>
     {
         Task<bool> SaveChangesAsync();
-        void AddEntity<T>(T entityToAdd);
-        void RemoveEntity<T>(T entityToRemove);
-        Task<IEnumerable<BoardGame>> GetBoardGamesAsync();
-        Task<BoardGame> GetSingleBoardGameAsync(int boardGameId);
-
+        void AddEntity(TEntity entityToAdd);
+        void RemoveEntity(TEntity entityToRemove);
+        Task<IEnumerable<TEntity>> GetEntitiesAsync();
+        Task<TEntity> GetSingleEntityAsync(int entityId);
     }
 }

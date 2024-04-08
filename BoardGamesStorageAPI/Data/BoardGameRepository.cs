@@ -1,17 +1,14 @@
-﻿using BoardGamesStorageAPI.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BoardGamesStorageAPI.Data
 {
-    public class BoardGameRepository : IBoardGameRepository
-
+    public class BoardGameRepository<TEntity> : IBoardGameRepository<TEntity> where TEntity : class
     {
         readonly DataContextEF _entityFramework;
 
-        public BoardGameRepository(IConfiguration configuration)
+        public BoardGameRepository(DataContextEF entityFramework)
         {
-            _entityFramework = new DataContextEF(configuration);
+            _entityFramework = entityFramework;
         }
 
         public async Task<bool> SaveChangesAsync()
@@ -19,7 +16,7 @@ namespace BoardGamesStorageAPI.Data
             return await _entityFramework.SaveChangesAsync() > 0;
         }
 
-        public void AddEntity<T>(T entityToAdd)
+        public void AddEntity(TEntity entityToAdd)
         {
             if (entityToAdd != null)
             {
@@ -27,7 +24,7 @@ namespace BoardGamesStorageAPI.Data
             }
         }
 
-        public void RemoveEntity<T>(T entityToRemove)
+        public void RemoveEntity(TEntity entityToRemove)
         {
             if (entityToRemove != null)
             {
@@ -35,20 +32,19 @@ namespace BoardGamesStorageAPI.Data
             }
         }
 
-        public async Task<IEnumerable<BoardGame>> GetBoardGamesAsync()
+        public async Task<IEnumerable<TEntity>> GetEntitiesAsync()
         {
-            IEnumerable<BoardGame> boardGames = await _entityFramework.BoardGames.ToListAsync();
-            return boardGames;
+            return await _entityFramework.Set<TEntity>().ToListAsync();
         }
 
-        public async Task<BoardGame> GetSingleBoardGameAsync(int boardGameId)
+        public async Task<TEntity> GetSingleEntityAsync(int entityId)
         {
-            BoardGame game = await _entityFramework.BoardGames.FirstOrDefaultAsync(b => b.BoardGameId == boardGameId);
-            if (game != null)
+            TEntity entity = await _entityFramework.Set<TEntity>().FindAsync(entityId);
+            if (entity != null)
             {
-                return game;
+                return entity;
             }
-            throw new Exception("Failed to Get Board Game");
+            throw new Exception("Failed to Get Entity");
         }
     }
 }

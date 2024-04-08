@@ -10,11 +10,11 @@ namespace BoardGamesStorageAPI.Controllers
     [Route("[controller]")]
     public class BoardGamesController : ControllerBase
     {
-        private readonly IBoardGameRepository _boardGameRepository;
+        private readonly IBoardGameRepository<BoardGame> _boardGameRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<BoardGamesController> _logger;
 
-        public BoardGamesController(IBoardGameRepository boardGameRepository, IMapper mapper, ILogger<BoardGamesController> logger)
+        public BoardGamesController(IBoardGameRepository<BoardGame> boardGameRepository, IMapper mapper, ILogger<BoardGamesController> logger)
         {
             _boardGameRepository = boardGameRepository ?? throw new ArgumentNullException(nameof(boardGameRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -26,7 +26,7 @@ namespace BoardGamesStorageAPI.Controllers
         {
             try
             {
-                IEnumerable<BoardGame> boardGames = await _boardGameRepository.GetBoardGamesAsync();
+                IEnumerable<BoardGame> boardGames = await _boardGameRepository.GetEntitiesAsync();
                 return Ok(boardGames);
             }
             catch (Exception ex)
@@ -41,7 +41,7 @@ namespace BoardGamesStorageAPI.Controllers
         {
             try
             {
-                BoardGame game = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
+                BoardGame game = await _boardGameRepository.GetSingleEntityAsync(boardGameId);
 
                 if (game == null)
                 {
@@ -62,7 +62,12 @@ namespace BoardGamesStorageAPI.Controllers
         {
             try
             {
-                BoardGame gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                BoardGame gameDb = await _boardGameRepository.GetSingleEntityAsync(boardGameId);
 
                 if (gameDb == null)
                 {
@@ -90,6 +95,11 @@ namespace BoardGamesStorageAPI.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 BoardGame gameDb = _mapper.Map<BoardGame>(boardGame);
 
                 _boardGameRepository.AddEntity(gameDb);
@@ -112,7 +122,7 @@ namespace BoardGamesStorageAPI.Controllers
         {
             try
             {
-                BoardGame gameDb = await _boardGameRepository.GetSingleBoardGameAsync(boardGameId);
+                BoardGame gameDb = await _boardGameRepository.GetSingleEntityAsync(boardGameId);
 
                 if (gameDb == null)
                 {
